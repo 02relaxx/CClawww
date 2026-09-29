@@ -1,0 +1,560 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cozy Claw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Karla:wght@400;500;700&family=Newsreader:ital@0;1&family=Work+Sans:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;700&family=Baloo+2:wght@400;600;700&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#EDE3D6; --ink:#1B2A3D; --clay:#2F4C68; --sage:#B79878; --card:#F7F1E8; --line:rgba(27,42,61,.14);
+    --font-display:'DM Serif Display',serif; --font-body:'Karla',sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+    --cream:#1E1712; --ink:#AEC6DE; --clay:#7FA0BE; --sage:#8C7358; --card:#29201A; --line:rgba(174,198,222,.14);
+  }}
+  :root[data-theme="dark"]{ --cream:#1E1712; --ink:#AEC6DE; --clay:#7FA0BE; --sage:#8C7358; --card:#29201A; --line:rgba(174,198,222,.14); }
+  html{ scroll-padding-top:env(safe-area-inset-top,0px); scroll-behavior:smooth; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--cream); color:var(--ink); font-family:var(--font-body); line-height:1.6; }
+  h1,h2,h3{ font-family:var(--font-display); font-weight:400; margin:0 0 .3em; line-height:1.15; }
+  h2{ font-size:2rem; }
+  a{ color:var(--clay); }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  header.site{ position:sticky; top:0; z-index:20; background:var(--cream); border-bottom:1px solid var(--line); padding:env(safe-area-inset-top,0px) 0 0; }
+  .nav{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:16px 24px; max-width:1080px; margin:0 auto; }
+  .brand{ font-family:var(--font-display); font-size:1.4rem; }
+  .nav-links{ display:flex; gap:22px; list-style:none; margin:0; padding:0; }
+  .nav-links a{ text-decoration:none; color:var(--ink); font-weight:500; }
+  .nav-btns{ display:flex; gap:8px; align-items:center; position:relative; }
+  .edit-toggle,.style-toggle{ background:none; border:1px solid var(--line); color:var(--ink); padding:6px 14px; border-radius:20px; cursor:pointer; font-family:inherit; }
+  .style-panel{ position:absolute; top:calc(100% + 8px); right:0; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; width:250px; box-shadow:0 8px 24px rgba(0,0,0,.15); z-index:30; }
+  .style-panel p{ margin:0 0 8px; font-weight:700; font-size:.85rem; }
+  .swatches{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .swatch{ width:28px; height:28px; border-radius:50%; border:2px solid var(--line); cursor:pointer; padding:0; }
+  .swatch.active{ border-color:var(--ink); }
+  .font-opts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .font-opts button{ flex:1 1 45%; padding:6px 4px; border-radius:6px; border:1px solid var(--line); background:none; color:var(--ink); cursor:pointer; font-size:.8rem; }
+  .font-opts button.active{ background:var(--clay); color:#fff; border-color:var(--clay); }
+  .item-icon{ width:44px; height:44px; border-radius:50%; background:var(--cream); display:flex; align-items:center; justify-content:center; flex:none; }
+  .card-top{ display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  .card-top h3{ margin:0; }
+  section{ padding:64px 0; }
+  .hero{ display:grid; grid-template-columns:1.2fr .8fr; gap:40px; align-items:center; padding-top:72px; }
+  .hero h1{ font-size:clamp(2.4rem,5vw,3.6rem); }
+  .hero p.sub{ font-size:1.1rem; max-width:46ch; margin:0 0 24px; }
+  .btn{ display:inline-block; background:var(--clay); color:#FFFDF8; padding:12px 26px; border-radius:6px; text-decoration:none; font-weight:700; border:none; cursor:pointer; font-family:inherit; font-size:1rem; }
+  .btn.ghost{ background:none; border:1.5px solid var(--clay); color:var(--clay); margin-left:10px; }
+  .paw{ justify-self:center; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px; margin-top:28px; }
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:20px; }
+  .card h3{ font-size:1.15rem; margin-bottom:6px; }
+  .card .price{ color:var(--clay); font-weight:700; margin-top:10px; }
+  .about{ max-width:64ch; }
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+  form{ display:grid; gap:12px; }
+  input,textarea,select{ font-family:inherit; font-size:1rem; padding:10px 12px; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); width:100%; }
+  label{ font-weight:700; font-size:.92rem; }
+  footer{ border-top:1px solid var(--line); padding:32px 0; text-align:center; font-size:.9rem; opacity:.8; }
+  .admin{ position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:50; display:flex; align-items:flex-start; justify-content:center; overflow:auto; padding:40px 16px; }
+  .admin-panel{ background:var(--cream); border-radius:12px; padding:28px; max-width:720px; width:100%; }
+  .admin-panel h3{ margin-top:22px; }
+  .item-row{ display:grid; grid-template-columns:110px 1fr 2fr 90px auto; gap:8px; margin-bottom:8px; align-items:center; }
+  .row-actions{ display:flex; gap:10px; margin-top:18px; }
+  .small{ font-size:.85rem; opacity:.75; }
+  .orders-list{ max-height:260px; overflow:auto; border:1px solid var(--line); border-radius:8px; padding:10px; }
+  .order-item{ padding:8px 0; border-bottom:1px solid var(--line); font-size:.9rem; }
+  .overflow-x{ overflow-x:auto; }
+  .menu-category{ margin-bottom:36px; } .menu-category:last-child{ margin-bottom:0; }
+  .cat-title{ font-size:1.25rem; margin-bottom:4px; }
+  .cat-block{ border:1px solid var(--line); border-radius:10px; padding:14px; margin-bottom:14px; }
+  .cat-head{ display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+  .cat-name{ font-weight:700; flex:1; }
+  .amenity-row.item-row{ grid-template-columns:110px 1fr auto; }
+  .amenities-list{ display:flex; flex-wrap:wrap; gap:12px; margin-top:22px; }
+  .amenity{ display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line); padding:8px 14px; border-radius:30px; font-size:.9rem; }
+  .amenity svg{ width:22px; height:22px; }
+  .origin-grid{ display:grid; grid-template-columns:1.1fr .9fr; gap:40px; align-items:start; }
+  .origin-photos{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
+  .origin-photos img{ width:100%; height:130px; object-fit:cover; border-radius:10px; }
+  .photo-placeholder{ height:130px; border:1.5px dashed var(--line); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:.78rem; opacity:.6; text-align:center; padding:8px; }
+  .photo-editors{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .photo-editor{ width:140px; }
+  .photo-thumb{ width:140px; height:100px; object-fit:cover; border-radius:8px; display:block; margin-bottom:6px; }
+  .photo-editor .photo-placeholder{ width:140px; height:100px; font-size:.72rem; margin-bottom:6px; }
+  .ordering-msg{ background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; }
+  .origin-banner{ position:relative; width:100%; height:280px; border-radius:14px; overflow:hidden; margin-bottom:32px; background:var(--card); }
+  .origin-banner img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .origin-banner::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:65%; background:linear-gradient(to bottom, rgba(0,0,0,0) 0%, var(--cream) 100%); pointer-events:none; }
+  .placeholder-banner{ display:flex; align-items:center; justify-content:center; height:100%; border:1.5px dashed var(--line); font-size:.85rem; opacity:.6; }
+  .origin-sub{ margin-top:40px; }
+  .origin-sub h3{ margin-bottom:10px; }
+  .feedback-quote{ font-style:italic; }
+  .feedback-row.item-row{ grid-template-columns:1fr 2fr auto; }
+  .code-editor{ width:100%; min-height:55vh; font-family:'Courier New',monospace; font-size:.8rem; white-space:pre; background:var(--card); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:12px; box-sizing:border-box; }
+  @media (max-width:760px){ .origin-grid{ grid-template-columns:1fr; } .origin-banner{ height:180px; } }
+  @media (max-width:760px){ .hero{ grid-template-columns:1fr; } .contact-grid{ grid-template-columns:1fr; } .item-row{ grid-template-columns:90px 1fr 1fr 70px auto; } }
+</style>
+</head><body><div id="app"><header class="site"><nav class="nav"><div class="brand">Cozy Claw</div><ul class="nav-links"><li><a href="#origin">Story</a></li><li><a href="#menu">Menu</a></li><li><a href="#merch">Merch</a></li><li><a href="#amenities">Amenities</a></li><li><a href="#contact">Contact</a></li></ul><div class="nav-btns"><button class="style-toggle" id="styleBtn" aria-label="Change look">🎨 Look</button><button class="edit-toggle" id="editBtn">Edit site</button></div></nav></header><div class="wrap"><section class="hero"><div><h1>Cozy Claw</h1><p class="sub">A warm corner cafe for slow mornings, good coffee, and a bit of mischief. Pull up a chair.</p><a class="btn" href="#contact">Order ahead</a><a class="btn ghost" href="#menu">See the menu</a></div><div class="paw"><svg width="180" height="180" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><ellipse cx="50" cy="62" rx="26" ry="20" fill="var(--clay)" opacity="0.9"/><ellipse cx="22" cy="34" rx="10" ry="13" fill="var(--sage)"/><ellipse cx="45" cy="20" rx="10" ry="13" fill="var(--sage)"/><ellipse cx="68" cy="24" rx="10" ry="13" fill="var(--sage)"/><ellipse cx="84" cy="42" rx="9" ry="12" fill="var(--sage)"/></svg></div></section><section id="origin"><h2>Origin &amp; mission</h2><div class="origin-grid"><div><p>Cozy Claw started as a tiny counter and a big pot of coffee. These days we still roast small batches and bake every morning.</p><p>Our mission is simple: give this block a slower morning and a reason to linger a little longer.</p></div><div class="origin-photos"><div class="photo-placeholder">Photo coming soon</div><div class="photo-placeholder">Photo coming soon</div><div class="photo-placeholder">Photo coming soon</div></div></div></section><section id="amenities"><h2>Amenities</h2><div class="amenities-list"><div class="amenity"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 15c8-8 22-8 30 0" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M12 21c5-5 13-5 18 0" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="21" cy="27" r="2" fill="var(--sage)"/></svg><span>Free Wi-Fi</span></div><div class="amenity"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 8h16v11H10z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M10 19v11M26 19v11M13 30h10" stroke="var(--sage)" stroke-width="2"/></svg><span>Outdoor seating</span></div><div class="amenity"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14 5v11M22 5v11" stroke="var(--clay)" stroke-width="2"/><path d="M10 16h18v6a9 9 0 0 1-18 0z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M19 31v3" stroke="var(--sage)" stroke-width="2"/></svg><span>Power outlets</span></div></div></section><section id="menu"><h2>Menu</h2><div class="menu-category"><h3 class="cat-title">Espresso</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Espresso</h3></div><p>Two ristretto shots, thick crema.</p><div class="price">$3.25</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Americano</h3></div><p>Espresso, hot water, simple and strong.</p><div class="price">$3.75</div></div></div></div><div class="menu-category"><h3 class="cat-title">Latte</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>House Latte</h3></div><p>Double shot, steamed milk, a little cinnamon on top.</p><div class="price">$4.75</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Vanilla Latte</h3></div><p>House latte with house-made vanilla syrup.</p><div class="price">$5.25</div></div></div></div><div class="menu-category"><h3 class="cat-title">Mocha</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Dark Mocha</h3></div><p>Espresso, steamed milk, bittersweet chocolate.</p><div class="price">$5.25</div></div></div></div><div class="menu-category"><h3 class="cat-title">Iced Blended</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Caramel Blend</h3></div><p>Blended espresso, milk, caramel, ice.</p><div class="price">$5.75</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/></svg></div><h3>Matcha Blend</h3></div><p>Blended matcha, milk, ice, light sweetness.</p><div class="price">$5.95</div></div></div></div><div class="menu-category"><h3 class="cat-title">Food</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 18h28a14 12 0 0 1-28 0z" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="14" cy="14" r="1.6" fill="var(--sage)"/><circle cx="20" cy="11" r="1.6" fill="var(--sage)"/><circle cx="26" cy="14" r="1.6" fill="var(--sage)"/></svg></div><h3>Sunrise Bowl</h3></div><p>Yogurt, granola, seasonal fruit, honey drizzle.</p><div class="price">$7.50</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 30V16a12 12 0 0 1 24 0v14z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M13 30v-9M20 30v-9M27 30v-9" stroke="var(--sage)" stroke-width="2"/></svg></div><h3>Pesto Toast</h3></div><p>Sourdough, whipped ricotta, basil pesto, chili flake.</p><div class="price">$8.00</div></div></div></div><div class="menu-category"><h3 class="cat-title">Desserts</h3><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 24c4-10 10-15 16-15 5 0 8 3 8 3s-3 1-5 4c-3 4-2 8 1 10-4 2-9 2-13-1-3-2-5-1-7-1z" fill="none" stroke="var(--clay)" stroke-width="2"/></svg></div><h3>Claw Croissant</h3></div><p>Butter croissant, almost too flaky to hold.</p><div class="price">$4.25</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M8 27l10-16 10 16z" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="18" cy="9" r="2" fill="var(--sage)"/></svg></div><h3>Chocolate Tart</h3></div><p>Dark chocolate ganache, shortcrust base.</p><div class="price">$5.50</div></div></div></div></section><section id="merch"><h2>Merch</h2><div class="grid overflow-x"><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="7" y="9" width="18" height="18" rx="2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M25 13h4a3 3 0 0 1 0 10h-4" fill="none" stroke="var(--clay)" stroke-width="2"/></svg></div><h3>Cozy Claw Mug</h3></div><p>Stoneware, holds a proper amount of coffee.</p><div class="price">$18</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 13h18l2 17H7z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M13 13v-2a5 5 0 0 1 10 0v2" fill="none" stroke="var(--sage)" stroke-width="2"/></svg></div><h3>Paw Print Tote</h3></div><p>Canvas, fits a laptop and a pastry.</p><div class="price">$16</div></div><div class="card"><div class="card-top"><div class="item-icon"><svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 12h16l2 16a3 3 0 0 1-3 4H11a3 3 0 0 1-3-4z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 12c0-3 1-5 4-5s4 2 4 5" fill="none" stroke="var(--sage)" stroke-width="2"/></svg></div><h3>House Blend Bag</h3></div><p>12oz whole bean, our everyday roast.</p><div class="price">$14</div></div></div></section><section id="contact"><h2>Visit &amp; order</h2><div class="contact-grid"><div><p><strong>Address</strong><br>Bayan Lepas</p><p><strong>Email</strong><br><a href="mailto:CC.cozyclaw@gmail.com">CC.cozyclaw@gmail.com</a></p><p><strong>Phone</strong><br>01156810358</p><p><strong>Instagram</strong><br>@cozyclaw</p></div><div><form id="orderForm"><label>Name<input required name="name"></label><label>Email or phone<input required name="contactInfo"></label><label>What would you like<select name="item"><option value="Espresso">Espresso</option><option value="Americano">Americano</option><option value="House Latte">House Latte</option><option value="Vanilla Latte">Vanilla Latte</option><option value="Dark Mocha">Dark Mocha</option><option value="Caramel Blend">Caramel Blend</option><option value="Matcha Blend">Matcha Blend</option><option value="Sunrise Bowl">Sunrise Bowl</option><option value="Pesto Toast">Pesto Toast</option><option value="Claw Croissant">Claw Croissant</option><option value="Chocolate Tart">Chocolate Tart</option><option value="Cozy Claw Mug">Cozy Claw Mug</option><option value="Paw Print Tote">Paw Print Tote</option><option value="House Blend Bag">House Blend Bag</option></select></label><label>Fulfillment<select name="fulfillment" id="fulfillmentSel"><option value="pickup">Pickup</option><option value="delivery">Delivery</option></select></label><label id="addressLabel" style="display:none">Delivery address<input name="address" id="addressInput"></label><label>Notes<textarea name="notes" rows="3" placeholder="Pickup time, allergies, etc."></textarea></label><button class="btn" type="submit">Send order request</button><p class="small" id="orderMsg"></p></form></div></div></section></div><footer><div class="wrap">&copy; 2026 Cozy Claw. Made with care.</div></footer></div><script id="site-data" type="application/json">{"hero":{"title":"Cozy Claw","subtitle":"A warm corner cafe for slow mornings, good coffee, and a bit of mischief. Pull up a chair.","cta":"Order ahead"},"origin":{"text":"Cozy Claw started as a tiny counter and a big pot of coffee. These days we still roast small batches and bake every morning.","mission":"Our mission is simple: give this block a slower morning and a reason to linger a little longer.","beans":"We source small-lot beans from Ethiopia and Colombia, roasted weekly in-house for freshness.","photos":[null,null,null]},"feedback":[{"name":"Mia T.","quote":"My favorite spot for a slow Sunday morning — the lattes are perfect."},{"name":"Daniel R.","quote":"Fast wifi, comfy seats, and the croissants disappear fast for a reason."},{"name":"Priya S.","quote":"Ordered ahead for pickup and it was ready right on time, every time."}],"amenities":[{"icon":"wifi","label":"Free Wi-Fi"},{"icon":"seat","label":"Outdoor seating"},{"icon":"power","label":"Power outlets"}],"menu":[{"name":"Espresso","items":[{"icon":"cup","name":"Espresso","desc":"Two ristretto shots, thick crema.","price":"$3.25"},{"icon":"cup","name":"Americano","desc":"Espresso, hot water, simple and strong.","price":"$3.75"},{"icon":"cup","name":"Macchiato","desc":"Espresso marked with a dollop of foam.","price":"$3.50"},{"icon":"cup","name":"Cortado","desc":"Espresso cut with a touch of warm milk.","price":"$3.95"},{"icon":"cup","name":"Ristretto","desc":"A short, concentrated shot, extra bold.","price":"$3.25"},{"icon":"cup","name":"Affogato","desc":"A shot of espresso poured over vanilla gelato.","price":"$5.50"}]},{"name":"Latte","items":[{"icon":"cup","name":"House Latte","desc":"Double shot, steamed milk, a little cinnamon on top.","price":"$4.75"},{"icon":"cup","name":"Vanilla Latte","desc":"House latte with house-made vanilla syrup.","price":"$5.25"},{"icon":"cup","name":"Caramel Latte","desc":"House latte with buttery caramel syrup.","price":"$5.25"},{"icon":"cup","name":"Hazelnut Latte","desc":"House latte with toasted hazelnut syrup.","price":"$5.25"},{"icon":"cup","name":"Honey Oat Latte","desc":"Oat milk latte sweetened with local honey.","price":"$5.50"},{"icon":"cup","name":"Chai Latte","desc":"Spiced black tea concentrate, steamed milk.","price":"$4.95"}]},{"name":"Mocha","items":[{"icon":"cup","name":"Dark Mocha","desc":"Espresso, steamed milk, bittersweet chocolate.","price":"$5.25"},{"icon":"cup","name":"White Mocha","desc":"Espresso, steamed milk, white chocolate.","price":"$5.50"},{"icon":"cup","name":"Mint Mocha","desc":"Dark mocha with a cool hit of peppermint.","price":"$5.50"},{"icon":"cup","name":"Salted Caramel Mocha","desc":"Mocha with caramel and a pinch of sea salt.","price":"$5.75"},{"icon":"cup","name":"Orange Mocha","desc":"Dark chocolate mocha with candied orange.","price":"$5.60"}]},{"name":"Iced Blended","items":[{"icon":"cup","name":"Caramel Blend","desc":"Blended espresso, milk, caramel, ice.","price":"$5.75"},{"icon":"cup","name":"Matcha Blend","desc":"Blended matcha, milk, ice, light sweetness.","price":"$5.95"},{"icon":"cup","name":"Mocha Blend","desc":"Blended espresso, chocolate, milk, ice.","price":"$5.85"},{"icon":"cup","name":"Coconut Blend","desc":"Blended espresso, coconut milk, ice.","price":"$5.90"},{"icon":"cup","name":"Chai Blend","desc":"Blended spiced chai, milk, ice.","price":"$5.60"},{"icon":"cup","name":"Cookies & Cream Blend","desc":"Blended cookies, milk, ice, whipped top.","price":"$6.10"}]},{"name":"Food","items":[{"icon":"bowl","name":"Sunrise Bowl","desc":"Yogurt, granola, seasonal fruit, honey drizzle.","price":"$7.50"},{"icon":"toast","name":"Pesto Toast","desc":"Sourdough, whipped ricotta, basil pesto, chili flake.","price":"$8.00"},{"icon":"toast","name":"Avocado Toast","desc":"Sourdough, smashed avocado, chili, lime.","price":"$8.50"},{"icon":"toast","name":"Egg & Cheese Bagel","desc":"Toasted bagel, fried egg, cheddar.","price":"$7.25"},{"icon":"toast","name":"Chicken Panini","desc":"Grilled chicken, mozzarella, basil pesto.","price":"$9.50"},{"icon":"bowl","name":"Garden Salad","desc":"Mixed greens, seasonal veg, house vinaigrette.","price":"$7.75"}]},{"name":"Desserts","items":[{"icon":"croissant","name":"Claw Croissant","desc":"Butter croissant, almost too flaky to hold.","price":"$4.25"},{"icon":"cake","name":"Chocolate Tart","desc":"Dark chocolate ganache, shortcrust base.","price":"$5.50"},{"icon":"croissant","name":"Cinnamon Roll","desc":"Soft-baked, cream cheese glaze.","price":"$4.75"},{"icon":"cake","name":"Blueberry Muffin","desc":"Fresh blueberries, crumb topping.","price":"$4.00"},{"icon":"cake","name":"Lemon Bar","desc":"Tart lemon curd, shortbread base.","price":"$4.50"},{"icon":"cake","name":"Tiramisu","desc":"Espresso-soaked layers, mascarpone cream.","price":"$6.25"}]}],"merch":[{"icon":"mug","name":"Cozy Claw Mug","desc":"Stoneware, holds a proper amount of coffee.","price":"$18"},{"icon":"tote","name":"Paw Print Tote","desc":"Canvas, fits a laptop and a pastry.","price":"$16"},{"icon":"coffeebag","name":"House Blend Bag","desc":"12oz whole bean, our everyday roast.","price":"$14"}],"ordering":{"enabled":true},"contact":{"address":"Bayan Lepas","email":"CC.cozyclaw@gmail.com","phone":"01156810358","instagram":"@cozyclaw"}}</script><script id="app-script">
+(function(){
+  const dataEl = document.getElementById('site-data');
+  let DATA = JSON.parse(dataEl.textContent);
+  const app = document.getElementById('app');
+  let isOwner = false;
+  let editing = false;
+  let draft = null;
+
+  function esc(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  var THEMES = {
+    brownBlue:{label:'Brown & blue',cream:'#EDE3D6',ink:'#1B2A3D',clay:'#2F4C68',sage:'#B79878',card:'#F7F1E8',line:'27,42,61'},
+    paleBlue:{label:'Pale blue',cream:'#E7EEF5',ink:'#1B2A3D',clay:'#3E5C76',sage:'#7C93A8',card:'#F5F9FC',line:'27,42,61'},
+    paleBrown:{label:'Pale brown',cream:'#EDE3D6',ink:'#3A2A1E',clay:'#8B5E3C',sage:'#B79878',card:'#F7F1E8',line:'58,42,30'},
+    cream:{label:'Cream & clay',cream:'#F7EFE3',ink:'#33241C',clay:'#B5654A',sage:'#7C8B6F',card:'#FFFDF8',line:'51,36,28'},
+    sage:{label:'Sage & moss',cream:'#EEF1E7',ink:'#2B3324',clay:'#5B7052',sage:'#A9B79C',card:'#F7F9F3',line:'43,51,36'},
+    blush:{label:'Blush & plum',cream:'#F7E9EC',ink:'#3B2430',clay:'#A64D6B',sage:'#D9A5B3',card:'#FDF3F5',line:'59,36,48'},
+    charcoal:{label:'Charcoal & gold',cream:'#232323',ink:'#EDE6D6',clay:'#C9A24B',sage:'#8C8577',card:'#2D2D2D',line:'237,230,214'},
+    mint:{label:'Mint & navy',cream:'#E6F2EE',ink:'#173C36',clay:'#2F7D6B',sage:'#8FC1B3',card:'#F3FAF8',line:'23,60,54'}
+  };
+  var FONTS = {
+    classic:{label:'Classic',display:"'DM Serif Display',serif",body:"'Karla',sans-serif"},
+    modern:{label:'Modern',display:"'Newsreader',serif",body:"'Work Sans',sans-serif"},
+    bold:{label:'Bold',display:"'Fraunces',serif",body:"'Inter',sans-serif"},
+    playful:{label:'Playful',display:"'Baloo 2',cursive",body:"'Quicksand',sans-serif"}
+  };
+  var prefs = {theme:'brownBlue', font:'classic'};
+  function loadPrefs(){
+    try{ var raw = localStorage.getItem('cozyclaw_prefs'); if(raw) prefs = JSON.parse(raw); }catch(err){}
+  }
+  function savePrefs(){ try{ localStorage.setItem('cozyclaw_prefs', JSON.stringify(prefs)); }catch(err){} }
+  function applyPrefs(){
+    var t = THEMES[prefs.theme] || THEMES.brownBlue;
+    var f = FONTS[prefs.font] || FONTS.classic;
+    var r = document.documentElement.style;
+    r.setProperty('--cream', t.cream); r.setProperty('--ink', t.ink); r.setProperty('--clay', t.clay);
+    r.setProperty('--sage', t.sage); r.setProperty('--card', t.card); r.setProperty('--line', 'rgba('+t.line+',.14)');
+    r.setProperty('--font-display', f.display); r.setProperty('--font-body', f.body);
+  }
+
+  function pawSVG(){
+    return '<svg width="180" height="180" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+
+    '<ellipse cx="50" cy="62" rx="26" ry="20" fill="var(--clay)" opacity="0.9"/>'+
+    '<ellipse cx="22" cy="34" rx="10" ry="13" fill="var(--sage)"/>'+
+    '<ellipse cx="45" cy="20" rx="10" ry="13" fill="var(--sage)"/>'+
+    '<ellipse cx="68" cy="24" rx="10" ry="13" fill="var(--sage)"/>'+
+    '<ellipse cx="84" cy="42" rx="9" ry="12" fill="var(--sage)"/>'+
+    '</svg>';
+  }
+
+  var ICONS = {
+    cup:'<path d="M8 10h20l-2 16a4 4 0 0 1-4 3.5H14A4 4 0 0 1 10 26z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M28 13h3a4 4 0 0 1 0 8h-2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 4c0 2-2 2-2 4M20 4c0 2-2 2-2 4" stroke="var(--sage)" stroke-width="2" fill="none"/>',
+    croissant:'<path d="M6 24c4-10 10-15 16-15 5 0 8 3 8 3s-3 1-5 4c-3 4-2 8 1 10-4 2-9 2-13-1-3-2-5-1-7-1z" fill="none" stroke="var(--clay)" stroke-width="2"/>',
+    bowl:'<path d="M6 18h28a14 12 0 0 1-28 0z" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="14" cy="14" r="1.6" fill="var(--sage)"/><circle cx="20" cy="11" r="1.6" fill="var(--sage)"/><circle cx="26" cy="14" r="1.6" fill="var(--sage)"/>',
+    toast:'<path d="M8 30V16a12 12 0 0 1 24 0v14z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M13 30v-9M20 30v-9M27 30v-9" stroke="var(--sage)" stroke-width="2"/>',
+    mug:'<rect x="7" y="9" width="18" height="18" rx="2" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M25 13h4a3 3 0 0 1 0 10h-4" fill="none" stroke="var(--clay)" stroke-width="2"/>',
+    tote:'<path d="M9 13h18l2 17H7z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M13 13v-2a5 5 0 0 1 10 0v2" fill="none" stroke="var(--sage)" stroke-width="2"/>',
+    coffeebag:'<path d="M10 12h16l2 16a3 3 0 0 1-3 4H11a3 3 0 0 1-3-4z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M14 12c0-3 1-5 4-5s4 2 4 5" fill="none" stroke="var(--sage)" stroke-width="2"/>',
+    food:'<circle cx="18" cy="18" r="11" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M12 12v6M12 12l2 6M18 11v14" stroke="var(--sage)" stroke-width="2"/>',
+    wifi:'<path d="M6 15c8-8 22-8 30 0" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M12 21c5-5 13-5 18 0" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="21" cy="27" r="2" fill="var(--sage)"/>',
+    seat:'<path d="M10 8h16v11H10z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M10 19v11M26 19v11M13 30h10" stroke="var(--sage)" stroke-width="2"/>',
+    power:'<path d="M14 5v11M22 5v11" stroke="var(--clay)" stroke-width="2"/><path d="M10 16h18v6a9 9 0 0 1-18 0z" fill="none" stroke="var(--clay)" stroke-width="2"/><path d="M19 31v3" stroke="var(--sage)" stroke-width="2"/>',
+    cake:'<path d="M8 27l10-16 10 16z" fill="none" stroke="var(--clay)" stroke-width="2"/><circle cx="18" cy="9" r="2" fill="var(--sage)"/>'
+  };
+  function iconSVG(key){
+    return '<svg width="26" height="26" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+(ICONS[key]||ICONS.food)+'</svg>';
+  }
+  function iconOptions(sel){
+    return Object.keys(ICONS).map(function(k){ return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+k+'</option>'; }).join('');
+  }
+
+  function cardsHTML(items, withPrice){
+    return items.map(function(i){
+      return '<div class="card"><div class="card-top"><div class="item-icon">'+iconSVG(i.icon)+'</div><h3>'+esc(i.name)+'</h3></div><p>'+esc(i.desc)+'</p>'+(withPrice?'<div class="price">'+esc(i.price)+'</div>':'')+'</div>';
+    }).join('');
+  }
+
+  function menuHTML(categories){
+    return categories.map(function(cat){
+      return '<div class="menu-category"><h3 class="cat-title">'+esc(cat.name)+'</h3><div class="grid overflow-x">'+cardsHTML(cat.items,true)+'</div></div>';
+    }).join('');
+  }
+
+  function amenitiesHTML(list){
+    return (list||[]).map(function(a){
+      return '<div class="amenity">'+iconSVG(a.icon)+'<span>'+esc(a.label)+'</span></div>';
+    }).join('');
+  }
+
+  function originBannerHTML(photos){
+    var src = photos && photos[0];
+    return '<div class="origin-banner">'+(src? '<img src="'+src+'" alt="">':'<div class="placeholder-banner">Add a horizontal photo in Edit site</div>')+'</div>';
+  }
+
+  function originSidePhotosHTML(photos){
+    return [1,2].map(function(i){
+      var src = photos && photos[i];
+      return src ? '<img src="'+src+'" alt="">' : '<div class="photo-placeholder">Photo coming soon</div>';
+    }).join('');
+  }
+
+  function feedbackCardsHTML(list){
+    return (list||[]).map(function(f){
+      return '<div class="card"><p class="feedback-quote">"'+esc(f.quote)+'"</p><div class="price">'+esc(f.name)+'</div></div>';
+    }).join('');
+  }
+
+  function optionsHTML(){
+    var all = [];
+    DATA.menu.forEach(function(cat){ cat.items.forEach(function(i){ all.push(i); }); });
+    all = all.concat(DATA.merch);
+    return all.map(function(i){ return '<option value="'+esc(i.name)+'">'+esc(i.name)+'</option>'; }).join('');
+  }
+
+  function orderFormHTML(d){
+    if(d.ordering && d.ordering.enabled === false){
+      return '<div class="ordering-msg"><p>Online ordering is paused right now — please call or message us to place an order.</p></div>';
+    }
+    return '<form id="orderForm"><label>Name<input required name="name"></label>'+
+    '<label>Email or phone<input required name="contactInfo"></label>'+
+    '<label>What would you like<select name="item">'+optionsHTML()+'</select></label>'+
+    '<label>Fulfillment<select name="fulfillment" id="fulfillmentSel"><option value="pickup">Pickup</option><option value="delivery">Delivery</option></select></label>'+
+    '<label id="addressLabel" style="display:none">Delivery address<input name="address" id="addressInput"></label>'+
+    '<label>Notes<textarea name="notes" rows="3" placeholder="Pickup time, allergies, etc."></textarea></label>'+
+    '<button class="btn" type="submit">Send order request</button>'+
+    '<p class="small" id="orderMsg"></p></form>';
+  }
+
+  function bodyHTML(d, ownerFlag){
+    return ''+
+    '<header class="site"><nav class="nav"><div class="brand">'+esc(d.hero.title)+'</div>'+
+    '<ul class="nav-links"><li><a href="#origin">Origin</a></li><li><a href="#menu">Menu</a></li><li><a href="#merch">Merch</a></li><li><a href="#feedback">Feedback</a></li><li><a href="#contact">Contact</a></li></ul>'+
+    '<div class="nav-btns"><button class="style-toggle" id="styleBtn" aria-label="Change look">🎨 Look</button>'+
+    (ownerFlag?'<button class="edit-toggle" id="editBtn">Edit site</button><button class="edit-toggle" id="codeBtn">&lt;/&gt; Code</button>':'')+
+    '</div></nav></header>'+
+    '<div class="wrap"><section class="hero"><div><h1>'+esc(d.hero.title)+'</h1><p class="sub">'+esc(d.hero.subtitle)+'</p>'+
+    '<a class="btn" href="#contact">'+esc(d.hero.cta)+'</a><a class="btn ghost" href="#menu">See the menu</a></div>'+
+    '<div class="paw">'+pawSVG()+'</div></section>'+
+    '<section id="origin">'+originBannerHTML(d.origin.photos)+
+    '<h2>Origin &amp; mission</h2><div class="origin-grid"><div><p>'+esc(d.origin.text)+'</p><p>'+esc(d.origin.mission)+'</p></div>'+
+    '<div class="origin-photos">'+originSidePhotosHTML(d.origin.photos)+'</div></div>'+
+    '<div class="origin-sub"><h3>Where our beans come from</h3><p>'+esc(d.origin.beans)+'</p></div>'+
+    '<div class="origin-sub" id="amenities"><h3>Amenities</h3><div class="amenities-list">'+amenitiesHTML(d.amenities)+'</div></div>'+
+    '</section>'+
+    '<section id="menu"><h2>Menu</h2>'+menuHTML(d.menu)+'</section>'+
+    '<section id="merch"><h2>Merch</h2><div class="grid overflow-x">'+cardsHTML(d.merch,true)+'</div></section>'+
+    '<section id="feedback"><h2>Customer feedback</h2><div class="grid overflow-x">'+feedbackCardsHTML(d.feedback)+'</div></section>'+
+    '<section id="contact"><h2>Visit &amp; order</h2><div class="contact-grid">'+
+    '<div><p><strong>Address</strong><br>'+esc(d.contact.address)+'</p>'+
+    '<p><strong>Email</strong><br><a href="mailto:'+esc(d.contact.email)+'">'+esc(d.contact.email)+'</a></p>'+
+    '<p><strong>Phone</strong><br>'+esc(d.contact.phone)+'</p>'+
+    '<p><strong>Instagram</strong><br>'+esc(d.contact.instagram)+'</p></div>'+
+    '<div>'+orderFormHTML(d)+'</div></div></section></div>'+
+    '<footer><div class="wrap">&copy; '+new Date().getFullYear()+' '+esc(d.hero.title)+'. Made with care.</div></footer>';
+  }
+
+  function render(){ app.innerHTML = bodyHTML(DATA, isOwner); wire(); }
+
+  function wire(){
+    var eb = document.getElementById('editBtn');
+    if(eb) eb.onclick = openAdmin;
+    var cb = document.getElementById('codeBtn');
+    if(cb) cb.onclick = openCodeEditor;
+    var sb = document.getElementById('styleBtn');
+    if(sb) sb.onclick = toggleStylePanel;
+    var f = document.getElementById('orderForm');
+    if(f) f.onsubmit = async function(e){
+      e.preventDefault();
+      var msg = document.getElementById('orderMsg');
+      try{
+        var db = await claude.use('db');
+        if(!db){ msg.textContent = "Couldn't send right now — please email us directly."; return; }
+        var fd = new FormData(f);
+        var id = 'o_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+        await db.doc('orders/'+id).set({
+          name: fd.get('name'), contactInfo: fd.get('contactInfo'),
+          item: fd.get('item'), fulfillment: fd.get('fulfillment'), address: fd.get('address')||'',
+          notes: fd.get('notes'), createdAt: Date.now()
+        });
+        f.reset();
+        msg.textContent = 'Thanks! We\'ll be in touch shortly.';
+      }catch(err){ msg.textContent = "Couldn't send right now — please email us directly."; }
+    };
+    var fulSel = document.getElementById('fulfillmentSel');
+    if(fulSel) fulSel.onchange = function(){
+      var addrLabel = document.getElementById('addressLabel');
+      var addrInput = document.getElementById('addressInput');
+      var isDelivery = fulSel.value === 'delivery';
+      addrLabel.style.display = isDelivery ? '' : 'none';
+      addrInput.required = isDelivery;
+    };
+  }
+
+  function toggleStylePanel(){
+    var existing = document.getElementById('stylePanel');
+    if(existing){ existing.remove(); return; }
+    var panel = document.createElement('div');
+    panel.className = 'style-panel'; panel.id = 'stylePanel';
+    panel.innerHTML = '<p>Background</p><div class="swatches">'+Object.keys(THEMES).map(function(k){
+      return '<button type="button" class="swatch'+(prefs.theme===k?' active':'')+'" data-theme="'+k+'" style="background:'+THEMES[k].cream+'" title="'+THEMES[k].label+'"></button>';
+    }).join('')+'</div>'+
+    '<p>Font</p><div class="font-opts">'+Object.keys(FONTS).map(function(k){
+      return '<button type="button" data-font="'+k+'" class="'+(prefs.font===k?'active':'')+'">'+FONTS[k].label+'</button>';
+    }).join('')+'</div>';
+    document.getElementById('styleBtn').parentNode.appendChild(panel);
+    panel.addEventListener('click', function(e){
+      var t = e.target.getAttribute('data-theme');
+      var fo = e.target.getAttribute('data-font');
+      if(t){ prefs.theme = t; }
+      if(fo){ prefs.font = fo; }
+      if(t || fo){ applyPrefs(); savePrefs();
+        panel.querySelectorAll('.swatch').forEach(function(s){ s.classList.toggle('active', s.getAttribute('data-theme')===prefs.theme); });
+        panel.querySelectorAll('.font-opts button').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-font')===prefs.font); });
+      }
+    });
+    document.addEventListener('click', function closeOnOutside(e){
+      if(!panel.contains(e.target) && e.target.id !== 'styleBtn'){ panel.remove(); document.removeEventListener('click', closeOnOutside); }
+    }, {capture:true});
+  }
+
+  function openCodeEditor(){
+    var overlay = document.createElement('div');
+    overlay.className = 'admin'; overlay.id = 'codeOverlay';
+    overlay.innerHTML = '<div class="admin-panel" style="max-width:900px;"><h2>Edit code</h2>'+
+      '<p class="small">Advanced: this is the page\'s raw HTML. Mistakes can break the site — copy it elsewhere first if you\'re not sure. Publishing here replaces everything, including content set in the regular editor.</p>'+
+      '<textarea id="codeEditor" class="code-editor">'+esc(buildDocument(DATA))+'</textarea>'+
+      '<div class="row-actions"><button class="btn" id="codeSaveBtn">Publish code</button>'+
+      '<button class="btn ghost" id="codeCloseBtn">Cancel</button></div>'+
+      '<p class="small" id="codeSaveMsg"></p></div>';
+    document.body.appendChild(overlay);
+    document.getElementById('codeCloseBtn').onclick = function(){ overlay.remove(); };
+    document.getElementById('codeSaveBtn').onclick = async function(){
+      var msg = document.getElementById('codeSaveMsg');
+      var newDoc = document.getElementById('codeEditor').value;
+      try{
+        var artifactCap = await claude.use('artifact');
+        if(!artifactCap){ msg.textContent = 'Publishing is unavailable in this view.'; return; }
+        await artifactCap.publish(newDoc);
+        msg.textContent = 'Published! Reloading…';
+        setTimeout(function(){ location.reload(); }, 800);
+      }catch(err){ msg.textContent = 'Could not publish — check your code and try again.'; }
+    };
+  }
+
+  // ---- Admin editing ----
+  function openAdmin(){
+    draft = JSON.parse(JSON.stringify(DATA));
+    var overlay = document.createElement('div');
+    overlay.className = 'admin'; overlay.id = 'adminOverlay';
+    overlay.innerHTML = adminHTML(draft);
+    document.body.appendChild(overlay);
+    wireAdmin();
+  }
+
+  function itemRows(items, kind){
+    return items.map(function(i,idx){
+      return '<div class="item-row" data-kind="'+kind+'" data-idx="'+idx+'">'+
+      '<select data-f="icon">'+iconOptions(i.icon)+'</select>'+
+      '<input value="'+esc(i.name)+'" data-f="name">'+
+      '<input value="'+esc(i.desc)+'" data-f="desc">'+
+      '<input value="'+esc(i.price)+'" data-f="price">'+
+      '<button type="button" class="btn ghost" data-remove="1">Remove</button></div>';
+    }).join('');
+  }
+
+  function categoryBlockHTML(cat){
+    return '<div class="cat-block"><div class="cat-head"><input class="cat-name" value="'+esc(cat.name)+'">'+
+    '<button type="button" class="btn ghost" data-remove-cat="1">Remove category</button></div>'+
+    '<div class="item-rows">'+itemRows(cat.items,'menu')+'</div>'+
+    '<button type="button" class="btn ghost" data-add-item="1">Add item</button></div>';
+  }
+
+  function amenityRows(list){
+    return list.map(function(a){
+      return '<div class="item-row amenity-row"><select data-f="icon">'+iconOptions(a.icon)+'</select>'+
+      '<input value="'+esc(a.label)+'" data-f="label"><button type="button" class="btn ghost" data-remove="1">Remove</button></div>';
+    }).join('');
+  }
+
+  function feedbackRows(list){
+    return list.map(function(f){
+      return '<div class="item-row feedback-row"><input value="'+esc(f.name)+'" data-f="name" placeholder="Name"><input value="'+esc(f.quote)+'" data-f="quote" placeholder="Quote"><button type="button" class="btn ghost" data-remove="1">Remove</button></div>';
+    }).join('');
+  }
+
+  function photoEditorHTML(src, idx){
+    return '<div class="photo-editor" data-photo-idx="'+idx+'">'+
+    (src? '<img src="'+src+'" class="photo-thumb">':'<div class="photo-placeholder">No photo</div>')+
+    '<input type="file" accept="image/*" data-photo-input="'+idx+'">'+
+    (src? '<button type="button" class="btn ghost" data-remove-photo="'+idx+'">Remove</button>':'')+
+    '</div>';
+  }
+
+  function adminHTML(d){
+    return '<div class="admin-panel"><h2>Edit Cozy Claw</h2><p class="small">Changes go live for everyone when you save.</p>'+
+    '<h3>Hero</h3><label>Title<input id="f_title" value="'+esc(d.hero.title)+'"></label>'+
+    '<label>Subtitle<textarea id="f_sub" rows="2">'+esc(d.hero.subtitle)+'</textarea></label>'+
+    '<label>Button text<input id="f_cta" value="'+esc(d.hero.cta)+'"></label>'+
+    '<h3>Origin &amp; mission</h3><label>Story<textarea id="f_origin_text" rows="3">'+esc(d.origin.text)+'</textarea></label>'+
+    '<label>Mission<textarea id="f_origin_mission" rows="2">'+esc(d.origin.mission)+'</textarea></label>'+
+    '<label>Where your beans come from<textarea id="f_origin_beans" rows="2">'+esc(d.origin.beans)+'</textarea></label>'+
+    '<div class="photo-editors" id="photoEditors">'+
+      '<div><p class="small">Top banner (horizontal)</p>'+photoEditorHTML(d.origin.photos[0],0)+'</div>'+
+      '<div><p class="small">Photo 2</p>'+photoEditorHTML(d.origin.photos[1],1)+'</div>'+
+      '<div><p class="small">Photo 3</p>'+photoEditorHTML(d.origin.photos[2],2)+'</div>'+
+    '</div>'+
+    '<h3>Amenities</h3><div id="amenityRows">'+amenityRows(d.amenities)+'</div>'+
+    '<button type="button" class="btn ghost" id="addAmenity">Add amenity</button>'+
+    '<h3>Menu</h3><div id="menuCats">'+d.menu.map(categoryBlockHTML).join('')+'</div>'+
+    '<button type="button" class="btn ghost" id="addCategory">Add category</button>'+
+    '<h3>Merch items</h3><div id="merchRows">'+itemRows(d.merch,'merch')+'</div>'+
+    '<button type="button" class="btn ghost" id="addMerch">Add merch item</button>'+
+    '<h3>Customer feedback</h3><div id="feedbackRows">'+feedbackRows(d.feedback)+'</div>'+
+    '<button type="button" class="btn ghost" id="addFeedback">Add feedback</button>'+
+    '<h3>Ordering</h3><label><input type="checkbox" id="f_ordering" style="width:auto;display:inline-block;margin-right:8px;"'+(d.ordering.enabled?' checked':'')+'>Enable online ordering (pickup &amp; delivery)</label>'+
+    '<h3>Contact</h3><label>Address<input id="f_addr" value="'+esc(d.contact.address)+'"></label>'+
+    '<label>Email<input id="f_email" value="'+esc(d.contact.email)+'"></label>'+
+    '<label>Phone<input id="f_phone" value="'+esc(d.contact.phone)+'"></label>'+
+    '<label>Instagram<input id="f_ig" value="'+esc(d.contact.instagram)+'"></label>'+
+    '<h3>Order requests</h3><div class="orders-list" id="ordersList"><p class="small">Loading…</p></div>'+
+    '<div class="row-actions"><button class="btn" id="saveBtn">Save changes</button>'+
+    '<button class="btn ghost" id="closeBtn">Cancel</button></div>'+
+    '<p class="small" id="saveMsg"></p></div>';
+  }
+
+  function readRows(container){
+    return Array.prototype.map.call(container.querySelectorAll('.item-row'), function(row){
+      return {
+        icon: row.querySelector('[data-f="icon"]').value,
+        name: row.querySelector('[data-f="name"]').value,
+        desc: row.querySelector('[data-f="desc"]').value,
+        price: row.querySelector('[data-f="price"]').value
+      };
+    });
+  }
+
+  function readMenuCategories(){
+    return Array.prototype.map.call(document.querySelectorAll('#menuCats .cat-block'), function(block){
+      return { name: block.querySelector('.cat-name').value, items: readRows(block.querySelector('.item-rows')) };
+    });
+  }
+
+  function readAmenities(container){
+    return Array.prototype.map.call(container.querySelectorAll('.item-row'), function(row){
+      return { icon: row.querySelector('[data-f="icon"]').value, label: row.querySelector('[data-f="label"]').value };
+    });
+  }
+
+  function readFeedback(container){
+    return Array.prototype.map.call(container.querySelectorAll('.item-row'), function(row){
+      return { name: row.querySelector('[data-f="name"]').value, quote: row.querySelector('[data-f="quote"]').value };
+    });
+  }
+
+  function bindPhotoInput(idx){
+    var editor = document.querySelector('.photo-editor[data-photo-idx="'+idx+'"]');
+    var input = editor.querySelector('[data-photo-input]');
+    input.onchange = function(){
+      var file = input.files[0];
+      if(!file) return;
+      if(file.size > 2*1024*1024){ alert('Please choose an image under 2MB.'); input.value=''; return; }
+      var reader = new FileReader();
+      reader.onload = function(){
+        draft.origin.photos[idx] = reader.result;
+        editor.outerHTML = photoEditorHTML(reader.result, idx);
+        bindPhotoInput(idx);
+      };
+      reader.readAsDataURL(file);
+    };
+  }
+
+  function wireAdmin(){
+    var overlay = document.getElementById('adminOverlay');
+    document.getElementById('closeBtn').onclick = function(){ overlay.remove(); };
+    document.getElementById('addCategory').onclick = function(){
+      document.getElementById('menuCats').insertAdjacentHTML('beforeend', categoryBlockHTML({name:'New category',items:[]}));
+    };
+    document.getElementById('addMerch').onclick = function(){
+      document.getElementById('merchRows').insertAdjacentHTML('beforeend', itemRows([{name:'New item',desc:'',price:'$0',icon:'food'}],'merch'));
+    };
+    document.getElementById('addAmenity').onclick = function(){
+      document.getElementById('amenityRows').insertAdjacentHTML('beforeend', amenityRows([{icon:'wifi',label:'New amenity'}]));
+    };
+    document.getElementById('addFeedback').onclick = function(){
+      document.getElementById('feedbackRows').insertAdjacentHTML('beforeend', feedbackRows([{name:'',quote:''}]));
+    };
+    [0,1,2].forEach(bindPhotoInput);
+    overlay.addEventListener('click', function(e){
+      if(e.target.matches('[data-remove]')) e.target.closest('.item-row').remove();
+      if(e.target.matches('[data-remove-cat]')) e.target.closest('.cat-block').remove();
+      if(e.target.matches('[data-add-item]')){
+        var block = e.target.closest('.cat-block');
+        block.querySelector('.item-rows').insertAdjacentHTML('beforeend', itemRows([{name:'New item',desc:'',price:'$0',icon:'food'}],'menu'));
+      }
+      if(e.target.matches('[data-remove-photo]')){
+        var idx = parseInt(e.target.getAttribute('data-remove-photo'),10);
+        draft.origin.photos[idx] = null;
+        e.target.closest('.photo-editor').outerHTML = photoEditorHTML(null, idx);
+        bindPhotoInput(idx);
+      }
+    });
+    document.getElementById('saveBtn').onclick = async function(){
+      var newData = {
+        hero:{ title:document.getElementById('f_title').value, subtitle:document.getElementById('f_sub').value, cta:document.getElementById('f_cta').value },
+        origin:{ text:document.getElementById('f_origin_text').value, mission:document.getElementById('f_origin_mission').value, beans:document.getElementById('f_origin_beans').value, photos: draft.origin.photos.slice() },
+        amenities: readAmenities(document.getElementById('amenityRows')),
+        menu: readMenuCategories(),
+        merch: readRows(document.getElementById('merchRows')),
+        feedback: readFeedback(document.getElementById('feedbackRows')),
+        ordering: { enabled: document.getElementById('f_ordering').checked },
+        contact:{ address:document.getElementById('f_addr').value, email:document.getElementById('f_email').value, phone:document.getElementById('f_phone').value, instagram:document.getElementById('f_ig').value }
+      };
+      var saveMsg = document.getElementById('saveMsg');
+      try{
+        var artifactCap = await claude.use('artifact');
+        if(!artifactCap){ saveMsg.textContent = 'Publishing is unavailable in this view.'; return; }
+        var newDoc = buildDocument(newData);
+        await artifactCap.publish(newDoc);
+        saveMsg.textContent = 'Saved!';
+        DATA = newData;
+        overlay.remove();
+        render();
+      }catch(err){ saveMsg.textContent = 'Could not save — try again.'; }
+    };
+    loadOrders();
+  }
+
+  async function loadOrders(){
+    var el = document.getElementById('ordersList');
+    try{
+      var db = await claude.use('db');
+      if(!db){ el.innerHTML = '<p class="small">Orders unavailable in this view.</p>'; return; }
+      db.collection('orders').orderBy('createdAt','desc').limit(30).onSnapshot(function(docs){
+        if(!docs || !docs.length){ el.innerHTML = '<p class="small">No order requests yet.</p>'; return; }
+        el.innerHTML = docs.map(function(o){
+          var v = o.data ? o.data() : o;
+          return '<div class="order-item"><strong>'+esc(v.name)+'</strong> — '+esc(v.item)+' ('+esc(v.fulfillment||'pickup')+')<br><span class="small">'+esc(v.contactInfo)+(v.address?' · '+esc(v.address):'')+(v.notes?' · '+esc(v.notes):'')+'</span></div>';
+        }).join('');
+      });
+    }catch(err){ el.innerHTML = '<p class="small">Could not load order requests.</p>'; }
+  }
+
+  function buildDocument(d){
+    return '<!DOCTYPE html><html lang="en">'+document.head.outerHTML+'<body>'+
+    '<div id="app">'+bodyHTML(d,true)+'</div>'+
+    '<script id="site-data" type="application/json">'+JSON.stringify(d)+'<'+'/script>'+
+    document.getElementById('app-script').outerHTML+
+    '</body></html>';
+  }
+
+  (async function init(){
+    loadPrefs();
+    applyPrefs();
+    try{
+      var user = await claude.use('user');
+      isOwner = user ? user.isOwner() : false;
+    }catch(err){ isOwner = false; }
+    render();
+  })();
+})();
+</script></body></html>
